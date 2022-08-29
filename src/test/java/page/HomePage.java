@@ -3,8 +3,9 @@ package page;
 import com.microsoft.playwright.Page;
 
 public class HomePage extends BasePage {
-    protected final String url = "https://www.whatsmybrowser.org";
-    private static final String title = "//h2[contains(@class,'header')]";
+    private static final String inputField = "//input[@name='q']";
+    private static final String submitButton = "(//input[@name='btnK'])[2]";
+
     private final Page page;
 
     public HomePage(Page page) {
@@ -13,11 +14,22 @@ public class HomePage extends BasePage {
     }
 
     public HomePage navigate() {
-        navigateToPage(url);
+        navigateToPage(BASE_URL);
+        return this;
+    }
+
+    public HomePage search(String query) {
+        page.fill(inputField, query);
+        page.click(submitButton);
+        switchToPage(page, SearchPage.class);
         return this;
     }
 
     public void waitForPageLoaded() {
-        page.waitForSelector(title);
+        page.waitForSelector(submitButton);
+    }
+
+    public boolean isPageLoaded() {
+        return page.isVisible(submitButton);
     }
 }
